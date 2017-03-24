@@ -32,6 +32,11 @@
         <activity
             android:name="com.moya.ivan.planapp.Actividad.MainActivity"
             android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name="com.moya.ivan.planapp.Actividad.LoginActivity"
+            android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar"
             />
     </application>

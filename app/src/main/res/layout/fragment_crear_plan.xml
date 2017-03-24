@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/img_user_crear_plan"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/logopeq"
+                    android:contentDescription="@string/logo_de_la_app"
+                    tools:ignore="RtlHardcoded" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txt_nombre_user_crear_plan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/prueba"
+                        android:textColor="@color/colorNegro" />
+
+                    <TextView
+                        android:id="@+id/txt_email_user_crear_plan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/prueba"
+
+                        android:textColor="@color/colorNegro" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/negroTrans"
+                android:orientation="vertical"
+                android:padding="30dp">
+
+
+                <EditText
+                    android:id="@+id/nombreEvento"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:background="#ffffff"
+                    android:hint="@string/nombre_del_plan"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="12dp"
+                    android:singleLine="true"
+                    android:textColor="@color/colorNegro"
+                    android:textColorHint="@color/negroTrans"
+                    android:textSize="15sp"
+                    tools:ignore="Deprecated" />
+
+
+                <EditText
+                    android:id="@+id/lugarEvento"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:background="#ffffff"
+                    android:hint="@string/lugar_del_plan"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="12dp"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#798e8b90"
+                    android:textSize="15sp"
+                    tools:ignore="Deprecated" />
+
+
+                <EditText
+                    android:id="@+id/descripcionEvento"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:background="#ffffff"
+                    android:hint="@string/descripcion_plan"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="12dp"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#798e8b90"
+                    android:textSize="15sp"
+                    tools:ignore="Deprecated" />
+
+
+                <EditText
+                    android:id="@+id/precioEvento"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:background="#ffffff"
+                    android:hint="@string/precio_plan"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1"
+                    android:padding="12dp"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#798e8b90"
+                    android:textSize="15sp"
+                    tools:ignore="Deprecated" />
+
+
+                <EditText
+                    android:id="@+id/plazasEvento"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:background="#ffffff"
+                    android:hint="@string/plazas_plan"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:padding="12dp"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#798e8b90"
+                    android:textSize="15sp"
+                    tools:ignore="Deprecated" />
+
+                <EditText
+                    android:id="@+id/fecha"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:background="#ffffff"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:hint="@string/fecha_del_plan"
+                    android:inputType="date"
+                    android:maxLines="1"
+                    android:onClick="showDatePickerDialog"
+                    android:padding="12dp"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#798e8b90"
+                    android:textSize="15sp"
+                    tools:ignore="Deprecated" />
+
+                <EditText
+                    android:id="@+id/hora"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:background="#ffffff"
+                    android:editable="true"
+                    android:focusable="false"
+                    android:hint="@string/hora_del_plan"
+                    android:inputType="time"
+                    android:maxLines="1"
+                    android:onClick="showTimePickerDialog"
+                    android:padding="12dp"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#798e8b90"
+                    android:textSize="15sp"
+                    tools:ignore="Deprecated" />
+
+
+                <Button
+                    android:id="@+id/crear"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:background="#00A79D"
+                    android:text="@string/crear_plan"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+</ScrollView>

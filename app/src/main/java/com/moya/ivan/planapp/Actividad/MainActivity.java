@@ -1,9 +1,10 @@
 package com.moya.ivan.planapp.Actividad;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.moya.ivan.planapp.Controlador.ServicioMostrarEventos;
+import com.moya.ivan.planapp.Fragments.FragmentCrearPlan;
 import com.moya.ivan.planapp.Modelo.CardAdapter;
 import com.moya.ivan.planapp.Modelo.Plan;
 import com.moya.ivan.planapp.Modelo.Planer;
@@ -34,7 +36,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, FragmentCrearPlan.OnFragmentInteractionListener {
 
 
     int id;
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity
     public static List<Plan> planes;
     static RecyclerView card;
     static CardAdapter myadaptador;
+    Intent i;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,20 +55,27 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         planes = new ArrayList<>();
-
-        card = (RecyclerView)findViewById(R.id.mycard);
+        //Log.i("baliza","variable estatica:" +Planer.nombrePLVista);
+        card = (RecyclerView) findViewById(R.id.mycard);
         card.setLayoutManager(new LinearLayoutManager(this));
-       // Log.i("baliza", "antes de allPlanes");
+        // Log.i("baliza", "antes de allPlanes");
         allPlanes();
-
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (comprobarSesion()) {
+                    fragment = new FragmentCrearPlan();
+                    FragmentTransaction = true;
+                    transaccionFragments(getString(R.string.titulo_fragment_crear_plan));
+                } else {
+                    i = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(i);
+                }
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
             }
         });
 
@@ -180,5 +190,28 @@ public class MainActivity extends AppCompatActivity
                 Log.i("baliza", "allPlanes : " + t.getMessage());
             }
         });
+    }
+
+    public boolean comprobarSesion() {
+        if (Planer.nombrePLVista != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    public void transaccionFragments(String titulo) {
+        if (FragmentTransaction) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.content_main, fragment)
+                    .commit();
+
+            getSupportActionBar().setTitle(titulo);
+        }
     }
 }

@@ -29,4 +29,16 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="prueba">prueba</string>
+    <string name="logo_de_la_app">Logo de la app</string>
+    <string name="nombre_del_plan">Nombre del plan...</string>
+    <string name="lugar_del_plan">Lugar del plan...</string>
+    <string name="descripcion_plan">Breve Descripcion...</string>
+    <string name="precio_plan">Precio por Persona...</string>
+    <string name="plazas_plan">Numero de plazas...</string>
+    <string name="fecha_del_plan">Fecha del Evento...</string>
+    <string name="hora_del_plan">Hora del Evento...</string>
+    <string name="crear_plan">Crear Plan</string>
+
+    <string name="titulo_fragment_crear_plan">Crea un plan</string>
 </resources>
