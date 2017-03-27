@@ -12,5 +12,5 @@ import retrofit2.http.Query;
 public interface ServicioLogin {
 
     @GET("php/login.php")
-    Call<Planer> getUser(@Query("username") String user, @Query("password") String pass);
+    Call<Planer> getUser(@Query("email") String email, @Query("password") String pass);
 }

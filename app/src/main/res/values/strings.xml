@@ -41,4 +41,5 @@
     <string name="crear_plan">Crear Plan</string>
 
     <string name="titulo_fragment_crear_plan">Crea un plan</string>
+    <string name="crear_plan_sin_loguin">¡Para crear un plan, debes estar logueado!</string>
 </resources>

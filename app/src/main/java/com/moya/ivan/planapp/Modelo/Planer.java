@@ -1,13 +1,26 @@
 package com.moya.ivan.planapp.Modelo;
 
+import java.io.Serializable;
+
 /**
  * Created by ivan on 14/2/17.
  */
 
-public class Planer {
+public class Planer implements Serializable {
 
     private int id, numSeguidores, numPlanes, numSiguiendo;
-    private String nombre, apellidos, username, direccion, email, movil, avatar, provincia, nivel, portada, localidad;
+    private String nombre;
+    private String apellidos;
+    private String username;
+    private String direccion;
+    private String email;
+    private String movil;
+    private String avatar;
+    private String provincia;
+    private String nivel;
+    private String portada;
+    private String localidad;
+    private String password;
     public static String nombrePLVista, emailPLVista, urlImgPLVista;
     public static int idPLVista;
 
@@ -17,8 +30,9 @@ public class Planer {
         numPlaners++;
     }
 
-    public Planer(String username, String direccion, String email, String movil, String provincia, String localidad) {
+    public Planer(String username, String password, String direccion, String email, String movil, String provincia, String localidad) {
         numPlaners++;
+        this.setPassword(password);
         this.username = username;
         this.direccion = direccion;
         this.email = email;
@@ -27,9 +41,10 @@ public class Planer {
         this.localidad = localidad;
     }
 
-    public Planer(int id, String username, String direccion, String email, String movil, String provincia, String avatar, String nivel, String portada, int numSeguidores, int numPlanes) {
+    public Planer(int id, String username, String password, String direccion, String email, String movil, String provincia, String avatar, String nivel, String portada, int numSeguidores, int numPlanes) {
         numPlaners++;
         this.id = id;
+        this.setPassword(password);
         this.username = username;
         this.direccion = direccion;
         this.email = email;
@@ -168,5 +183,13 @@ public class Planer {
 
     public void setNumPlanes(int numPlanes) {
         this.numPlanes = numPlanes;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -33,7 +33,6 @@ public class RestClient {
                 .client(httpClient.build())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
-        Log.i("baliza", "final del restclient");
     }
 
     public Retrofit getRetrofit() {

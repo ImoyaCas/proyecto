@@ -1,11 +1,12 @@
 package com.moya.ivan.planapp.Actividad;
 
+import android.app.Fragment;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,9 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.moya.ivan.planapp.Controlador.ServicioMostrarEventos;
-import com.moya.ivan.planapp.Fragments.FragmentCrearPlan;
 import com.moya.ivan.planapp.Modelo.CardAdapter;
 import com.moya.ivan.planapp.Modelo.Plan;
 import com.moya.ivan.planapp.Modelo.Planer;
@@ -35,8 +37,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FragmentCrearPlan.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
     int id;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity
     static RecyclerView card;
     static CardAdapter myadaptador;
     Intent i;
+    Planer planer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,22 +57,23 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         planes = new ArrayList<>();
-        //Log.i("baliza","variable estatica:" +Planer.nombrePLVista);
         card = (RecyclerView) findViewById(R.id.mycard);
         card.setLayoutManager(new LinearLayoutManager(this));
-        // Log.i("baliza", "antes de allPlanes");
         allPlanes();
 
-
+        Log.i("baliza", "valor de la variable: " + Planer.nombrePLVista);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (comprobarSesion()) {
-                    fragment = new FragmentCrearPlan();
-                    FragmentTransaction = true;
-                    transaccionFragments(getString(R.string.titulo_fragment_crear_plan));
+                    Intent i = new Intent(MainActivity.this, CrearPlan.class);
+                    startActivity(i);
                 } else {
+                    Toast toast1 =
+                            Toast.makeText(getApplicationContext(),
+                                    R.string.crear_plan_sin_loguin, Toast.LENGTH_SHORT);
+                    toast1.show();
                     i = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(i);
                 }
@@ -94,6 +97,7 @@ public class MainActivity extends AppCompatActivity
 
         nombrevista.setText(Planer.nombrePLVista);
         emailvista.setText(Planer.emailPLVista);
+
     }
 
     @Override
@@ -187,7 +191,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<List<Plan>> call, Throwable t) {
-                Log.i("baliza", "allPlanes : " + t.getMessage());
+                Log.e("baliza", "allPlanes : " + t.getMessage());
             }
         });
     }
@@ -201,17 +205,39 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    protected void onStop() {
+        super.onStop();
+        Log.i("baliza", "onstop");
 
     }
 
-    public void transaccionFragments(String titulo) {
-        if (FragmentTransaction) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content_main, fragment)
-                    .commit();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("baliza", "ondestroy");
 
-            getSupportActionBar().setTitle(titulo);
-        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i("baliza", "onpause");
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("baliza", "onresume");
+
+        allPlanes();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Gson gson = new Gson(); //Instancia Gson.
+        String json = prefs.getString("myObjeto", "");
+        planer = gson.fromJson(json, Planer.class);
+
+
+
     }
 }

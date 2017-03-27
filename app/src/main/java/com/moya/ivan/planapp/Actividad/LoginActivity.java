@@ -5,18 +5,22 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -25,11 +29,22 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.moya.ivan.planapp.Controlador.ServicioLogin;
+import com.moya.ivan.planapp.Modelo.Planer;
+import com.moya.ivan.planapp.Modelo.RestClient;
 import com.moya.ivan.planapp.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -61,6 +76,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    Planer planer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +103,42 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String user = mEmailView.getText().toString();
+                String pass = mPasswordView.getText().toString();
+
+                // final Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                // startActivity(intent);
+
+                RestClient restClient = new RestClient();
+                Retrofit retrofit = restClient.getRetrofit();
+
+                ServicioLogin servicio = retrofit.create(ServicioLogin.class);
+                final Call<Planer> respuesta = servicio.getUser(user, pass);
+                respuesta.enqueue(new Callback<Planer>() {
+
+                    @Override
+                    public void onResponse(Call<Planer> call, Response<Planer> response) {
+                        // cambiarVentana(response);
+                        planer = new Planer();
+                        Log.i("baliza", "valor de la respuesta: " + response.body().getUsername() + " Valor del obj usuario: " + planer.getUsername() + " Valor del text view: " + mEmailView.getText().toString());
+                        planer = response.body();
+                        Log.i("baliza", "valor de la respuesta: " + response.body().getUsername() + " Valor del obj usuario: " + planer.getUsername() + " Valor del text view: " + mEmailView.getText().toString());
+                        Log.i("baliza", "valor de la respuesta: " + response.body().getPassword() + " Valor del obj usuario: " + planer.getPassword() + " Valor del text view: " + mPasswordView.getText().toString());
+                        //String nombre = usuario.getUsername();
+                        planer.nombrePLVista = planer.getUsername();
+                        planer.emailPLVista = planer.getEmail();
+                        planer.idPLVista = planer.getId();
+                        planer.urlImgPLVista = planer.getAvatar();
+                        Log.i("baliza", "urlavatar: " + planer.urlImgPLVista);
+                        Log.i("baliza", "valor de la static nombre: " + planer.nombrePLVista + " Valor del static email: " + planer.emailPLVista + " Valor del static id: " + planer.idPLVista);
+                        iniciarActivity();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Planer> call, Throwable t) {
+                        // Toast toast = Toast.makeText(this, "Credenciales Correctos", Toast.LENGTH_LONG).show();
+                    }
+                });
                 attemptLogin();
             }
         });
@@ -136,7 +189,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             }
         }
     }
-
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -345,6 +397,40 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             mAuthTask = null;
             showProgress(false);
         }
+    }
+
+
+    public void iniciarActivity() {
+        String pass = mPasswordView.getText().toString();
+        String pass2 = planer.getPassword();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (Objects.equals(pass, pass2)) {
+                Toast toast = Toast.makeText(this, "Credenciales Correctos", Toast.LENGTH_LONG);
+                toast.show();
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+            } else {
+                Toast toast = Toast.makeText(this, "Credenciales inCorrectos", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (Planer.nombrePLVista != null){
+            guardarObjeto(planer);
+        }
+    }
+
+    private void guardarObjeto(Planer planer) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        Gson gson = new Gson();  //Instancia Gson.
+        String json = gson.toJson(planer); //convierte a .json el objeto
+        prefsEditor.putString("myObjeto", json);
+        prefsEditor.commit();
     }
 }
 
