@@ -1,10 +1,10 @@
 package com.moya.ivan.planapp.Actividad;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -39,6 +39,8 @@ import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int REQUEST_CODE_LOGIN = 1;
+    private static final String MY_PREFS_NAME = "DatosInicioPlaner";
 
     int id;
     Fragment fragment = null;
@@ -47,7 +49,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static RecyclerView card;
     static CardAdapter myadaptador;
     Intent i;
-    Planer planer;
+    Gson gson;
+    static Planer planer;
+    TextView nombrevista, emailvista;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +63,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         planes = new ArrayList<>();
         card = (RecyclerView) findViewById(R.id.mycard);
         card.setLayoutManager(new LinearLayoutManager(this));
-        allPlanes();
 
-        Log.i("baliza", "valor de la variable: " + Planer.nombrePLVista);
+        Log.i("baliza", "valor de la variable: " + Planer.idPLVista);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     R.string.crear_plan_sin_loguin, Toast.LENGTH_SHORT);
                     toast1.show();
                     i = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivity(i);
+                    startActivityForResult(i, REQUEST_CODE_LOGIN);
                 }
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
@@ -92,12 +95,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         View header = navigationView.getHeaderView(0);
-        TextView nombrevista = (TextView) header.findViewById(R.id.nombreVista);
-        TextView emailvista = (TextView) header.findViewById(R.id.emailVista);
-
-        nombrevista.setText(Planer.nombrePLVista);
-        emailvista.setText(Planer.emailPLVista);
-
+        nombrevista = (TextView) header.findViewById(R.id.nombreVista);
+        emailvista = (TextView) header.findViewById(R.id.emailVista);
     }
 
     @Override
@@ -139,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+            // finish();
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -197,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public boolean comprobarSesion() {
-        if (Planer.nombrePLVista != null) {
+        if (Splash.conectado) {
             return true;
         } else {
             return false;
@@ -207,37 +206,81 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStop() {
         super.onStop();
-        Log.i("baliza", "onstop");
+        Log.i("baliza", "onstop main");
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.i("baliza", "ondestroy");
+        Log.i("baliza", "ondestroy main");
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i("baliza", "onpause");
+        Log.i("baliza", "onpause main");
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i("baliza", "onresume");
+        Log.i("baliza", "onresume main");
+        Log.i("baliza", "statica nombre" + Planer.nombrePLVista);
 
         allPlanes();
+      if (Splash.conectado && !Splash.verificarConectado){
+            recojerInfoSplash();
+        }
+    }
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Gson gson = new Gson(); //Instancia Gson.
-        String json = prefs.getString("myObjeto", "");
-        planer = gson.fromJson(json, Planer.class);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i("baliza", "onActivityResult main");
+        Log.i("baliza", "requestCode main: " + requestCode);
+        // check if the request code is same as what is passed  here it is 2
+        if (requestCode == REQUEST_CODE_LOGIN) {
+            if (resultCode == RESULT_OK) {
+                if (data.getStringExtra("myjson") != null) {
+                    Log.i("baliza", "onActivityResult main if");
+                    Log.i("baliza", "data: " + data.getStringExtra("myjson"));
+                    gson = new Gson();
+                    planer = gson.fromJson(data.getStringExtra("myjson"), Planer.class);
+                    nombrevista.setText(Planer.nombrePLVista);
+                    emailvista.setText(Planer.emailPLVista);
+                    if (planer.comprobarEstado(planer.getEstado())){
+                        almacenarObjeto(MainActivity.this, planer.getId());
+                    }
+                    Log.i("baliza", "nombre user: " + planer.getNombre() + " email user: " + planer.getEmail() +" id user: " + planer.getId()+" estado user: " + planer.getEstado());
+                    Splash.verificarConectado = true;
+                    Splash.conectado = true;
+                }
+            }
+        }
+    }
 
+    public void almacenarObjeto(Context context, int id) {
+        Log.i("baliza", "almacenarObjeto ");
+        SharedPreferences settings = context.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor;
 
+        Log.i("baliza", "idplaner: " + id);
+        editor = settings.edit();
+        editor.putInt("idPlaner", id);
+        editor.commit();
 
+        Log.i("baliza", "fin almacenarObjeto");
+    }
+
+    public void recojerInfoSplash(){
+        Log.i("baliza", "inicio recojerInfoSplash");
+        gson = new Gson();
+        planer = gson.fromJson(getIntent().getStringExtra("myjson"), Planer.class);
+        nombrevista.setText(planer.getNombre());
+        emailvista.setText(planer.getEmail());
+        Log.i("baliza", "fin recojerInfoSplash valores: " + getIntent().getStringExtra("myjson"));
     }
 }

@@ -21,6 +21,7 @@ public class Planer implements Serializable {
     private String portada;
     private String localidad;
     private String password;
+    private int estado;
     public static String nombrePLVista, emailPLVista, urlImgPLVista;
     public static int idPLVista;
 
@@ -191,5 +192,32 @@ public class Planer implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
+    }
+
+    public boolean comprobarEstado(int estado){
+        if (estado == 1){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public void cambiarEstado(boolean estado){
+        int intEstado;
+        if (estado == true){
+            intEstado = 1;
+            setEstado(intEstado);
+        }else{
+            intEstado = 0;
+            setEstado(intEstado);
+        }
     }
 }

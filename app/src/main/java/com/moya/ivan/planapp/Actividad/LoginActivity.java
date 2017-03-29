@@ -7,14 +7,12 @@ import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -66,6 +64,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
+    private static final int REQUEST_CODE_LOGIN = 1;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -77,6 +76,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     private View mProgressView;
     private View mLoginFormView;
     Planer planer;
+    Gson gson;
 
 
     @Override
@@ -125,13 +125,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                         Log.i("baliza", "valor de la respuesta: " + response.body().getUsername() + " Valor del obj usuario: " + planer.getUsername() + " Valor del text view: " + mEmailView.getText().toString());
                         Log.i("baliza", "valor de la respuesta: " + response.body().getPassword() + " Valor del obj usuario: " + planer.getPassword() + " Valor del text view: " + mPasswordView.getText().toString());
                         //String nombre = usuario.getUsername();
-                        planer.nombrePLVista = planer.getUsername();
-                        planer.emailPLVista = planer.getEmail();
-                        planer.idPLVista = planer.getId();
-                        planer.urlImgPLVista = planer.getAvatar();
-                        Log.i("baliza", "urlavatar: " + planer.urlImgPLVista);
-                        Log.i("baliza", "valor de la static nombre: " + planer.nombrePLVista + " Valor del static email: " + planer.emailPLVista + " Valor del static id: " + planer.idPLVista);
-                        iniciarActivity();
+                        Planer.nombrePLVista = planer.getUsername();
+                        Planer.emailPLVista = planer.getEmail();
+                        Planer.idPLVista = planer.getId();
+                        Planer.urlImgPLVista = planer.getAvatar();
+                        Log.i("baliza", "urlavatar: " + Planer.urlImgPLVista);
+                        Log.i("baliza", "valor de la static nombre: " + Planer.nombrePLVista + " Valor del static email: " + Planer.emailPLVista + " Valor del static id: " + Planer.idPLVista);
+                        attemptLogin();
                     }
 
                     @Override
@@ -139,12 +139,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                         // Toast toast = Toast.makeText(this, "Credenciales Correctos", Toast.LENGTH_LONG).show();
                     }
                 });
-                attemptLogin();
+
             }
         });
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+
     }
 
     private void populateAutoComplete() {
@@ -236,6 +238,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
+            iniciarActivity();
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
@@ -260,32 +263,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mProgressView.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 
     @Override
@@ -399,38 +395,35 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         }
     }
 
+    /**
+     *
+     *
+     *
+     *
+     */
+
 
     public void iniciarActivity() {
+        Log.i("baliza", "iniciarActivity");
         String pass = mPasswordView.getText().toString();
         String pass2 = planer.getPassword();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Log.i("baliza", "iniciarActivity if");
             if (Objects.equals(pass, pass2)) {
                 Toast toast = Toast.makeText(this, "Credenciales Correctos", Toast.LENGTH_LONG);
                 toast.show();
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
+                Intent intent = new Intent();
+                gson = new Gson();
+                String myjson = gson.toJson(planer);
+                Log.i("baliza", "json:" + myjson);
+                intent.putExtra("myjson", myjson);
+                setResult(RESULT_OK, intent);
+                finish();
             } else {
                 Toast toast = Toast.makeText(this, "Credenciales inCorrectos", Toast.LENGTH_LONG);
                 toast.show();
             }
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (Planer.nombrePLVista != null){
-            guardarObjeto(planer);
-        }
-    }
-
-    private void guardarObjeto(Planer planer) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor prefsEditor = prefs.edit();
-        Gson gson = new Gson();  //Instancia Gson.
-        String json = gson.toJson(planer); //convierte a .json el objeto
-        prefsEditor.putString("myObjeto", json);
-        prefsEditor.commit();
     }
 }
 

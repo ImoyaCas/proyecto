@@ -13,4 +13,7 @@ public interface ServicioLogin {
 
     @GET("php/login.php")
     Call<Planer> getUser(@Query("email") String email, @Query("password") String pass);
+
+    @GET("php/splash.php")
+    Call<Planer> getUserInicio(@Query("id") int id);
 }
