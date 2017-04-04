@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.i("baliza", "statica nombre" + Planer.nombrePLVista);
 
         allPlanes();
-      if (Splash.conectado && !Splash.verificarConectado){
+        if (Splash.conectado && !Splash.verificarConectado) {
             recojerInfoSplash();
         }
     }
@@ -251,10 +251,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     planer = gson.fromJson(data.getStringExtra("myjson"), Planer.class);
                     nombrevista.setText(Planer.nombrePLVista);
                     emailvista.setText(Planer.emailPLVista);
-                    if (planer.comprobarEstado(planer.getEstado())){
-                        almacenarObjeto(MainActivity.this, planer.getId());
-                    }
-                    Log.i("baliza", "nombre user: " + planer.getNombre() + " email user: " + planer.getEmail() +" id user: " + planer.getId()+" estado user: " + planer.getEstado());
+
+                    almacenarObjeto(MainActivity.this, planer.getId());
+                    Log.i("baliza", "onActivityResult if almacenarObjeto");
+
+                    Log.i("baliza", "nombre user: " + planer.getNombre() + " email user: " + planer.getEmail() + " id user: " + planer.getId() + " estado user: " + planer.getEstado());
                     Splash.verificarConectado = true;
                     Splash.conectado = true;
                 }
@@ -275,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.i("baliza", "fin almacenarObjeto");
     }
 
-    public void recojerInfoSplash(){
+    public void recojerInfoSplash() {
         Log.i("baliza", "inicio recojerInfoSplash");
         gson = new Gson();
         planer = gson.fromJson(getIntent().getStringExtra("myjson"), Planer.class);

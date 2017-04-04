@@ -2,28 +2,27 @@ package com.moya.ivan.planapp.Modelo;
 
 import com.google.gson.annotations.SerializedName;
 
-
 /**
- * Created by ivan on 29/3/17.
- * Objeto plano Java para representar el cuerpo de la petición POST
+ * Objeto plano Java para representar el cuerpo de la petición POST /affiliates/login
  */
-
 public class LoginBody {
-    @SerializedName("id")
-    private String email;
+    @SerializedName("email")
+    private String userId;
+
+    @SerializedName("password")
     private String password;
 
-    public LoginBody(String email, String password) {
-        this.email = email;
+    public LoginBody(String userId, String password) {
+        this.userId = userId;
         this.password = password;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getPassword() {

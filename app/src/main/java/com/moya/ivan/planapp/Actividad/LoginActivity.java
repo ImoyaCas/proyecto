@@ -31,13 +31,17 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.moya.ivan.planapp.Controlador.ServicioLogin;
+import com.moya.ivan.planapp.Modelo.LoginBody;
 import com.moya.ivan.planapp.Modelo.Planer;
 import com.moya.ivan.planapp.Modelo.RestClient;
 import com.moya.ivan.planapp.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,7 +60,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
-
+    private static final String PATTERN_EMAIL = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     /**
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
@@ -113,7 +118,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                 Retrofit retrofit = restClient.getRetrofit();
 
                 ServicioLogin servicio = retrofit.create(ServicioLogin.class);
-                final Call<Planer> respuesta = servicio.getUser(user, pass);
+                LoginBody ObjLogin = new LoginBody(user, pass);
+                Gson gson = new Gson();
+                String myjson = gson.toJson(ObjLogin);
+                final Call<Planer> respuesta = servicio.login(ObjLogin);
+                Log.d("baliza", "valor del envio" + myjson);
                 respuesta.enqueue(new Callback<Planer>() {
 
                     @Override
@@ -131,7 +140,27 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                         Planer.urlImgPLVista = planer.getAvatar();
                         Log.i("baliza", "urlavatar: " + Planer.urlImgPLVista);
                         Log.i("baliza", "valor de la static nombre: " + Planer.nombrePLVista + " Valor del static email: " + Planer.emailPLVista + " Valor del static id: " + Planer.idPLVista);
-                        attemptLogin();
+                        iniciarActivity();
+
+                        // Mostrar progreso
+                        showProgress(false);
+                        Log.d("baliza", "response: " + response.body());
+                        // Procesar errores
+                        if (!response.isSuccessful()) {
+                            String error = "Ha ocurrido un error contacte al administrador";
+                            Log.d("baliza", "LoginActivity error " + error);
+                            try {
+                                // Reportar causas de error no relacionado con la API
+                                Log.d("baliza", "LoginActivity " + response.errorBody().string());
+                                Log.d("baliza", "LoginActivity " + response.body());
+                                Log.d("baliza", "LoginActivity " + response.message());
+                            } catch (IOException e) {
+                                Log.d("baliza", "LoginActivity " + e.getMessage());
+                                Log.d("baliza", "LoginActivity " + e.getLocalizedMessage());
+                                e.printStackTrace();
+                            }
+                        }
+                        return;
                     }
 
                     @Override
@@ -143,8 +172,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        mLoginFormView =
+
+                findViewById(R.id.login_form);
+
+        mProgressView =
+
+                findViewById(R.id.login_progress);
 
 
     }
@@ -246,8 +280,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
+        // Compiles the given regular expression into a pattern.
+        Pattern pattern = Pattern.compile(PATTERN_EMAIL);
+
+        // Match the given input against this pattern
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
     private boolean isPasswordValid(String password) {
@@ -393,6 +431,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             mAuthTask = null;
             showProgress(false);
         }
+
     }
 
     /**

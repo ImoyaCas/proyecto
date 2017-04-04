@@ -1,7 +1,5 @@
 package com.moya.ivan.planapp.Modelo;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -18,7 +16,7 @@ public class RestClient {
     Retrofit retrofit;
 
     public RestClient() {
-        final String BASE_URL = "http://planapp.es/";
+        final String BASE_URL = "http://planapp.es/api/v1/";
         Gson gson = new GsonBuilder()
                 .setDateFormat("dd/mm/yy")
                 .setLenient()
